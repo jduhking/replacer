@@ -1,6 +1,10 @@
 class_name Player
 extends CharacterBody2D
 
+enum PAINT { YELLOW, BLACK }
+var paint_to_atlas_map = { PAINT.YELLOW : GameManager.YELLOW_TILE , PAINT.BLACK : GameManager.BLACK_TILE }
+var paint : PAINT = PAINT.YELLOW
+
 
 @export var movement_speed : float = 120
 @export var acceleration : float = 0.6
@@ -9,7 +13,6 @@ extends CharacterBody2D
 var elapsed_time : float = 0
 var current_speed : float = 0
 var was_moving : bool = false
-
 
 func _physics_process(delta: float) -> void:
 
@@ -34,3 +37,13 @@ func _physics_process(delta: float) -> void:
 	velocity = dir * current_speed
 	move_and_slide()
 	was_moving = is_moving
+	var tilemap := GameManager.tiles
+	if Input.is_action_just_pressed("toggle"):
+		paint = PAINT.YELLOW if paint == PAINT.BLACK else PAINT.BLACK
+	var tilemap_position = tilemap.local_to_map(position)
+	var tile_source_id := tilemap.get_cell_source_id(tilemap_position)
+	
+	if tile_source_id != -1:
+		#print("atlas coord: ", tilemap.get_cell_atlas_coords(tilemap_position))
+		#if tilemap.get_cell_atlas_coords(tilemap_position) in GameManager.VALID_FLOORS:
+		tilemap.set_cell(tilemap_position, tile_source_id, paint_to_atlas_map[paint] ,tilemap.get_cell_alternative_tile(tilemap_position))
