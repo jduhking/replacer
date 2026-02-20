@@ -1,28 +1,121 @@
-[gd_scene load_steps=4 format=3 uid="uid://mwf2y88ejmqg"]
+[gd_scene load_steps=10 format=3 uid="uid://mwf2y88ejmqg"]
 
 [ext_resource type="Script" uid="uid://daf7o18vnq3y8" path="res://player.gd" id="1_4flbx"]
+[ext_resource type="Texture2D" uid="uid://cwb0yuq8v0mp1" path="res://Char-Sheet.png" id="2_onrkg"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mwb40"]
 size = Vector2(16, 16)
 
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_mwb40"]
+[sub_resource type="Animation" id="Animation_sweqy"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="Animation" id="Animation_hqtel"]
+resource_name = "idle-black"
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [8]
+}
+
+[sub_resource type="Animation" id="Animation_i3pqv"]
+resource_name = "idle-yellow"
+length = 0.1
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [4]
+}
+
+[sub_resource type="Animation" id="Animation_onrkg"]
+resource_name = "walk-black"
+length = 0.4
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [9, 10, 11, 10]
+}
+
+[sub_resource type="Animation" id="Animation_2hs0m"]
+resource_name = "walk-yellow"
+length = 0.4
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [5, 6, 7, 6]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_2hs0m"]
+_data = {
+&"RESET": SubResource("Animation_sweqy"),
+&"idle-black": SubResource("Animation_hqtel"),
+&"idle-yellow": SubResource("Animation_i3pqv"),
+&"walk-black": SubResource("Animation_onrkg"),
+&"walk-yellow": SubResource("Animation_2hs0m")
+}
 
 [node name="Player" type="CharacterBody2D"]
+collision_layer = 2
 script = ExtResource("1_4flbx")
+movement_speed = null
+acceleration = null
+deceleration = null
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_mwb40")
 
-[node name="TextureRect" type="TextureRect" parent="."]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -8.0
-offset_top = -8.0
-offset_right = 8.0
-offset_bottom = 8.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = SubResource("PlaceholderTexture2D_mwb40")
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_onrkg")
+hframes = 12
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_2hs0m")
+}

@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://c5yw78c7mea87"]
+[gd_scene load_steps=3 format=3 uid="uid://c5yw78c7mea87"]
 
 [ext_resource type="Script" uid="uid://cyh77kt5m6p6y" path="res://game_manager.gd" id="1_70yv6"]
+[ext_resource type="FontFile" uid="uid://bo7ds6i7xa1od" path="res://Monocraft.ttf" id="2_smx3j"]
 
 [node name="GameManager" type="Node2D"]
+z_index = 100
 script = ExtResource("1_70yv6")
+font = ExtResource("2_smx3j")
