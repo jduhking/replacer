@@ -11,7 +11,7 @@ var grid_position : Vector2i = Vector2i.ZERO
 
 @export var black : Color
 @export var yellow : Color
-
+# Hello James was here.
 var enemy_map = { "basic" : preload("res://Enemies/normal-enemy.tscn")}
 # Called when the node enters the scene tree for the first time.
 var color : GameManager.PAINT = GameManager.PAINT.YELLOW
