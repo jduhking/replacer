@@ -37,6 +37,9 @@ var flows_black : Array[Vector2i] = []
 
 var reserved_cells : Dictionary = {}
 
+var painted_cells : Dictionary = { }
+
+
 #const VALID_FLOORS : Array[Vector2i] = [YELLOW_TILE, BLACK_TILE, FLOOR_TILE]
 
 #func _ready():
@@ -50,6 +53,7 @@ func change_state(new_state : GAMESTATE):
 	match game_state:
 		GAMESTATE.GAME:
 			get_tree().paused = false
+			
 		GAMESTATE.GAMEOVER:
 			get_tree().paused = true
 			UIManager.set_gameover_label(true)
@@ -201,6 +205,4 @@ func draw_flow_field(flows : Array[Vector2i], costs : Array[float]):
 			var center = Vector2(x * CELL_SIZE + CELL_SIZE / 2.0, y * CELL_SIZE + CELL_SIZE / 2.0)
 			var target = center + Vector2(dir) * (CELL_SIZE / 2.0 - 2)
 			draw_line(center, target, Color.RED, 1.0)
-			
-
 	

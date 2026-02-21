@@ -264,5 +264,3 @@ acceleration = 0.6
 deceleration = 0.1
 
 [node name="Spawner" parent="." instance=ExtResource("4_fc0e3")]
-spawn_follow_time = 5.0
-spawn_time = 0.5

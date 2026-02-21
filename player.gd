@@ -16,8 +16,14 @@ var elapsed_time : float = 0
 var current_speed : float = 0
 var was_moving : bool = false
 
+signal painted(cell : Vector2i)
+
 func _ready() -> void:
 	GameManager.player = self
+	painted.connect(_on_paint)
+	
+func _on_paint(cell : Vector2i):
+	GameManager.painted_cells[cell] = true
 
 func _physics_process(delta: float) -> void:
 
@@ -63,6 +69,7 @@ func paint_floor():
 		#print("atlas coord: ", tilemap.get_cell_atlas_coords(tilemap_position))
 		#if tilemap.get_cell_atlas_coords(tilemap_position) in GameManager.VALID_FLOORS:
 		tilemap.set_cell(tilemap_position, tile_source_id, GameManager.paint_to_atlas_map[paint] ,tilemap.get_cell_alternative_tile(tilemap_position))
-
+		painted.emit(tilemap_position)
+		
 func current_tile():
 	print("current tile: ", GameManager.tiles.local_to_map(position))
