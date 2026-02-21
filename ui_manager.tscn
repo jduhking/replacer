@@ -22,3 +22,8 @@ offset_right = 173.0
 offset_bottom = 107.0
 text = "Game Over"
 label_settings = SubResource("LabelSettings_quu8p")
+
+[node name="Label" type="Label" parent="."]
+offset_right = 40.0
+offset_bottom = 23.0
+text = "This is cammi wow "
