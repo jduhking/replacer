@@ -12,7 +12,8 @@ var grid_position : Vector2i = Vector2i.ZERO
 @export var black : Color
 @export var yellow : Color
 # Hello James was here.
-var enemy_map = { "basic" : preload("res://Enemies/normal-enemy.tscn")}
+var enemy_map = { "basic" : preload("res://Enemies/normal-enemy.tscn"), "ranged" : preload("res://Enemies/ranged-enemy.tscn")}
+var spawn_percentage_map = { "basic" : 0.8, "ranged" : 0.2}
 # Called when the node enters the scene tree for the first time.
 var color : GameManager.PAINT = GameManager.PAINT.YELLOW
 @onready var color_map = { GameManager.PAINT.YELLOW : yellow, GameManager.PAINT.BLACK : black }
