@@ -1,0 +1,90 @@
+[gd_scene load_steps=4 format=3 uid="uid://c0g7n4rtctau4"]
+
+[ext_resource type="Texture2D" uid="uid://cxmcnveyvk7gt" path="res://UI/UI_res/RM-title.png" id="1_ak2if"]
+[ext_resource type="Script" uid="uid://bfx3nb7hp6okn" path="res://title_screen.gd" id="1_ig5kc"]
+[ext_resource type="FontFile" uid="uid://x2wt4saifcs6" path="res://UI/UI_res/PressStart2P-Regular.ttf" id="2_ig5kc"]
+
+[node name="TitleScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = 32.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ig5kc")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 256.0
+offset_bottom = 256.0
+color = Color(0, 0, 0, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ColorRect"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -96.5
+offset_top = -93.5
+offset_right = 96.5
+offset_bottom = 93.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="TextureRect" parent="ColorRect/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+texture = ExtResource("1_ak2if")
+
+[node name="MarginContainer" type="MarginContainer" parent="ColorRect/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_top = 0
+
+[node name="startText" type="Label" parent="ColorRect/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+theme_override_fonts/font = ExtResource("2_ig5kc")
+theme_override_font_sizes/font_size = 8
+text = "PRESS ANY KEY TO START"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="Timer" type="Timer" parent="ColorRect/VBoxContainer/startText"]
+wait_time = 0.65
+autostart = true
+
+[node name="Credits" type="HBoxContainer" parent="ColorRect/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 4
+
+[node name="creditTitle" type="Label" parent="ColorRect/VBoxContainer/Credits"]
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_colors/font_color = Color(0.45882353, 0.12941177, 0.93333334, 1)
+theme_override_fonts/font = ExtResource("2_ig5kc")
+theme_override_font_sizes/font_size = 8
+text = "PROGRAMMER :
+GAME ARTIST :
+UI ARTIST :"
+horizontal_alignment = 2
+vertical_alignment = 2
+
+[node name="creditName" type="Label" parent="ColorRect/VBoxContainer/Credits"]
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_colors/font_color = Color(0.45882353, 0.12941177, 0.93333334, 1)
+theme_override_fonts/font = ExtResource("2_ig5kc")
+theme_override_font_sizes/font_size = 8
+text = "JAMES 0.
+LANZ
+CAMMI"
+vertical_alignment = 2
+
+[connection signal="timeout" from="ColorRect/VBoxContainer/startText/Timer" to="." method="_on_timer_timeout"]
