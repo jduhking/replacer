@@ -21,28 +21,28 @@ var is_moving : bool = false
 
 func _ready() -> void:
 	await get_tree().process_frame
-	var tilemap = GameManager.tiles
-	target_cell = tilemap.local_to_map(position)
-	var atlas = tilemap.get_cell_atlas_coords(target_cell)
+	GameManager.tiles = GameManager.tiles
+	target_cell = GameManager.tiles.local_to_map(position)
+	var atlas = GameManager.tiles.get_cell_atlas_coords(target_cell)
 	var valid = GameManager.paint_to_atlas_map[paint]
 	movement_speed = randf_range(min_movement_speed, max_movement_speed)
 	if atlas != valid:
 		print("WARNING: ", name, " spawned on invalid tile ", atlas, " at ", target_cell)
-	position = tilemap.map_to_local(target_cell)
+	position = GameManager.tiles.map_to_local(target_cell)
 
 func _physics_process(delta: float) -> void:
-	var tilemap : TileMapLayer = GameManager.tiles
-	var target_pos = tilemap.map_to_local(target_cell)
+	move(delta)
 	
-	
-	if position.distance_to(target_pos) > 1.0:
+func move(delta : float):
+	var target = GameManager.tiles.map_to_local(target_cell)
+	if position.distance_to(target) > 1.0:
 		# move toward target cell center
-		var dir = (target_pos - position).normalized()
+		var dir = (target - position).normalized()
 		position += dir * movement_speed * delta
 		animator.play("walk-" + ("black" if paint == GameManager.PAINT.BLACK else "yellow"))
 	else:
 		# snap to center and pick next cell from flow field
-		position = target_pos
+		position = target
 		animator.play("idle-" + ("black" if paint == GameManager.PAINT.BLACK else "yellow"))
 		var current_flows = GameManager.flows_black if paint == GameManager.PAINT.BLACK else GameManager.flows_yellow
 		if current_flows.size() > 0:
@@ -55,12 +55,12 @@ func _physics_process(delta: float) -> void:
 					GameManager.reserved_cells[target_cell] = true
 	check_if_can_kill_player()
 	check_if_on_invalid_tile()
+	
 
 func check_if_on_invalid_tile():
-	var tilemap = GameManager.tiles
-	var current_cell = tilemap.local_to_map(position)
-	var atlas = tilemap.get_cell_atlas_coords(current_cell)
-	if atlas != GameManager.paint_to_atlas_map[paint] and tilemap.local_to_map(GameManager.player.position) != current_cell:
+	var current_cell = GameManager.tiles.local_to_map(position)
+	var atlas = GameManager.tiles.get_cell_atlas_coords(current_cell)
+	if atlas != GameManager.paint_to_atlas_map[paint] and GameManager.tiles.local_to_map(GameManager.player.position) != current_cell:
 		death()
 		
 func death():
@@ -69,22 +69,20 @@ func death():
 	queue_free()
 	
 func check_if_can_kill_player():
-	var tilemap = GameManager.tiles
-	var current_cell = tilemap.local_to_map(position)
-	if current_cell == tilemap.local_to_map(GameManager.player.position):
+	var current_cell = GameManager.tiles.local_to_map(position)
+	if current_cell == GameManager.tiles.local_to_map(GameManager.player.position):
 		GameManager.change_state(GameManager.GAMESTATE.GAMEOVER)
 
 func paint_floor():
-	var tilemap := GameManager.tiles
 	if Input.is_action_just_pressed("toggle"):
 		paint = GameManager.PAINT.YELLOW if paint == GameManager.PAINT.BLACK else GameManager.PAINT.BLACK
-	var tilemap_position = tilemap.local_to_map(position)
-	var tile_source_id := tilemap.get_cell_source_id(tilemap_position)
+	var tiles_position = GameManager.tiles.local_to_map(position)
+	var tile_source_id := GameManager.tiles.get_cell_source_id(tiles_position)
 	
 	if tile_source_id != -1:
-		#print("atlas coord: ", tilemap.get_cell_atlas_coords(tilemap_position))
-		#if tilemap.get_cell_atlas_coords(tilemap_position) in GameManager.VALID_FLOORS:
-		tilemap.set_cell(tilemap_position, tile_source_id, GameManager.paint_to_atlas_map[paint] ,tilemap.get_cell_alternative_tile(tilemap_position))
+		#print("atlas coord: ", GameManager.tiles.get_cell_atlas_coords(GameManager.tiles_position))
+		#if GameManager.tiles.get_cell_atlas_coords(GameManager.tiles_position) in GameManager.VALID_FLOORS:
+		GameManager.tiles.set_cell(GameManager.tiles_position, tile_source_id, GameManager.paint_to_atlas_map[paint] ,GameManager.tiles.get_cell_alternative_tile(GameManager.tiles_position))
 #
 #func print_current_cell():
 	#print("current cell: ", GameManager.tiles.local_to_map(position), " atlas ", GameManager.tiles.get_cell_atlas_coords(GameManager.tiles.local_to_map(position)))

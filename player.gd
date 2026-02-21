@@ -33,7 +33,6 @@ func _physics_process(delta: float) -> void:
 	paint_floor()
 
 func move(dir : Vector2, delta : float):
-	var tilemap = GameManager.tiles
 	var is_moving = dir.length() > 0
 
 	elapsed_time += delta
@@ -42,7 +41,7 @@ func move(dir : Vector2, delta : float):
 		var t = clampf(elapsed_time / acceleration, 0,1)
 		current_speed = lerpf(0, movement_speed, sin(t))
 		animator.play("walk-" + ("black" if paint == GameManager.PAINT.BLACK	else "yellow"))
-		var current_cell = tilemap.local_to_map(position)
+		var current_cell = GameManager.tiles.local_to_map(position)
 		#print("current cell: ", current_cell, " last cell ", last_cell	)
 		if current_cell.distance_to(last_cell) > MOVE_THRESHOLD:
 			last_cell = current_cell
@@ -59,17 +58,16 @@ func move(dir : Vector2, delta : float):
 	was_moving = is_moving
 	
 func paint_floor():
-	var tilemap = GameManager.tiles
 	if Input.is_action_just_pressed("toggle"):
 		paint = GameManager.PAINT.YELLOW if paint == GameManager.PAINT.BLACK else GameManager.PAINT.BLACK
-	var tilemap_position = tilemap.local_to_map(position)
-	var tile_source_id = tilemap.get_cell_source_id(tilemap_position)
+	var tile_position = GameManager.tiles.local_to_map(position)
+	var tile_source_id = GameManager.tiles.get_cell_source_id(tile_position)
 	
 	if tile_source_id != -1:
-		#print("atlas coord: ", tilemap.get_cell_atlas_coords(tilemap_position))
-		#if tilemap.get_cell_atlas_coords(tilemap_position) in GameManager.VALID_FLOORS:
-		tilemap.set_cell(tilemap_position, tile_source_id, GameManager.paint_to_atlas_map[paint] ,tilemap.get_cell_alternative_tile(tilemap_position))
-		painted.emit(tilemap_position)
+		#print("atlas coord: ", GameManager.tiles.get_cell_atlas_coords(GameManager.tiles_position))
+		#if GameManager.tiles.get_cell_atlas_coords(GameManager.tiles_position) in GameManager.VALID_FLOORS:
+		GameManager.tiles.set_cell(tile_position, tile_source_id, GameManager.paint_to_atlas_map[paint] ,GameManager.tiles.get_cell_alternative_tile(tile_position))
+		painted.emit(tile_position)
 		
 func current_tile():
 	print("current tile: ", GameManager.tiles.local_to_map(position))

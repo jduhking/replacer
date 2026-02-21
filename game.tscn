@@ -264,3 +264,5 @@ acceleration = 0.6
 deceleration = 0.1
 
 [node name="Spawner" parent="." instance=ExtResource("4_fc0e3")]
+default_basic_percentage = 0.1
+default_ranged_percentage = 0.9

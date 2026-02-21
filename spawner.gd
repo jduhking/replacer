@@ -11,9 +11,14 @@ var grid_position : Vector2i = Vector2i.ZERO
 
 @export var black : Color
 @export var yellow : Color
-# Hello James was here.
+
 var enemy_map = { "basic" : preload("res://Enemies/normal-enemy.tscn"), "ranged" : preload("res://Enemies/ranged-enemy.tscn")}
-var spawn_percentage_map = { "basic" : 0.8, "ranged" : 0.2}
+@export var default_basic_percentage : float = 0.8
+@export var default_ranged_percentage : float = 0.2
+@onready var default_percent_map = { "basic" : default_basic_percentage, "ranged" : default_ranged_percentage }
+
+@onready var enemy_percent_map = default_percent_map
+var mapped_enemy_percentages = []
 # Called when the node enters the scene tree for the first time.
 var color : GameManager.PAINT = GameManager.PAINT.YELLOW
 @onready var color_map = { GameManager.PAINT.YELLOW : yellow, GameManager.PAINT.BLACK : black }
@@ -28,6 +33,28 @@ var random_grid_pos : Vector2i
 
 func _ready() -> void:
 	change_state(STATE.FOLLOW)
+	if mapped_enemy_percentages.size() <= 0:
+		mapped_enemy_percentages = percent_mapper(enemy_percent_map.keys(), enemy_percent_map.values())
+
+static func percent_mapper(input_arr : Array, percent_arr : Array) -> Dictionary:
+	assert(input_arr.size() == percent_arr.size()) # they need to be the same size
+	var perc_to_index = {}
+	var acc = 0.0
+	
+	
+	for i in percent_arr.size():
+		var weight = percent_arr[i]
+		var range_start = acc
+		var range_end = acc + weight
+		
+		# fill up the lookup table for each percentage in the range
+		
+		for step in range(range_start * 10.0, range_end * 10.0):
+			perc_to_index[str(step / 10.0)] = input_arr[i]
+			
+		acc += weight
+		
+	return perc_to_index
 	
 
 func change_state(new_state : STATE):
@@ -51,7 +78,7 @@ func update_state(delta : float):
 		STATE.SPAWN:
 			elapsed_time += delta
 			if elapsed_time >= spawn_time:
-				spawn_enemy("basic", grid_position)
+				spawn_enemy(select_enemy(), grid_position)
 				change_state(STATE.FOLLOW)
 		STATE.STOP:
 			pass
@@ -61,18 +88,20 @@ func follow_player():
 	global_position = GameManager.player.global_position + follow_offset
 	grid_position = GameManager.tiles.local_to_map(GameManager.player.position)
 	
+func select_enemy():
+	var rand_val = min(snappedf(randf(), 0.1), 0.9)
+	return mapped_enemy_percentages[str(rand_val)]
+	
 func spawn_enemy(enemy_name : String, grid_pos : Vector2i):
 	var enemy : Enemy = (enemy_map[enemy_name] as PackedScene).instantiate()
 	enemy.paint = color
-	var tilemap = GameManager.tiles
-	var enemy_spawn_location = tilemap.map_to_local(grid_pos) 
+	var enemy_spawn_location = GameManager.tiles.map_to_local(grid_pos) 
 	#print("enemy spawning here: ", enemy_spawn_location)
 	enemy.global_position = Vector2(enemy_spawn_location)
 	get_parent().add_child(enemy)
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	var tilemap : TileMapLayer = GameManager.tiles
-	var atlas = tilemap.get_cell_atlas_coords(grid_position)
+	var atlas = GameManager.tiles.get_cell_atlas_coords(grid_position)
 	color = GameManager.PAINT.YELLOW if atlas == GameManager.YELLOW_TILE else (GameManager.PAINT.BLACK if atlas == GameManager.BLACK_TILE else color)
 	$ColorRect.color = color_map[color]
 	queue_redraw()
@@ -95,14 +124,13 @@ func _physics_process(delta: float) -> void:
 	update_state(delta)
 	
 func _draw() -> void:
-	var tilemap = GameManager.tiles
-	if tilemap == null:
+	if GameManager.tiles == null:
 		return
-	var cell_world_pos = tilemap.map_to_local(grid_position)
+	var cell_world_pos = GameManager.tiles.map_to_local(grid_position)
 	var top_left = cell_world_pos - Vector2(8, 8) - global_position
 	draw_rect(Rect2(top_left, Vector2(16, 16)), Color.RED, false, 1.0)
 	
 	if spawning_random:
-		var cwp = tilemap.map_to_local(random_grid_pos)
+		var cwp = GameManager.tiles.map_to_local(random_grid_pos)
 		var tl = cwp - Vector2(8, 8) - global_position
 		draw_rect(Rect2(tl, Vector2(16, 16)), Color.RED, false, 1.0)

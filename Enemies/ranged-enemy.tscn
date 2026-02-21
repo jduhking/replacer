@@ -99,6 +99,15 @@ _data = {
 
 [node name="RangedEnemy" type="CharacterBody2D"]
 script = ExtResource("1_t6w16")
+min_min_distance = null
+max_min_distance = null
+shoot_pause = null
+paint = null
+max_movement_speed = 250.0
+min_movement_speed = 120.0
+movement_speed = null
+acceleration = null
+deceleration = null
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_w3hj6")
