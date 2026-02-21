@@ -4,18 +4,25 @@ extends Node2D
 @export var font : Font
 
 enum PAINT { YELLOW, BLACK }
+enum GAMESTATE { NONE, GAME, GAMEOVER }
+var game_state : GAMESTATE = GAMESTATE.GAME
+
+const game_path = "res://game.tscn"
 
 const CELL_SIZE = 16;
 const COLS := int(256 / CELL_SIZE)
 const ROWS := int(224 / CELL_SIZE)
 
-const YELLOW_TILE : Vector2i = Vector2i(4,2)
-const BLACK_TILE : Vector2i = Vector2i(3,2)
-const FLOOR_TILE : Vector2i = Vector2i(2,2)
-const WALL_TILE : Vector2i = Vector2i(1,2)
+
+const YELLOW_TILE : Vector2i = Vector2i(6,2)
+const BLACK_TILE : Vector2i = Vector2i(6,6)
+const FLOOR_TILE : Vector2i = Vector2i(6,10)
+const WALL_TILE : Vector2i = Vector2i(3,10)
+
+var player : Player
 
 var paint_to_atlas_map = { PAINT.YELLOW : YELLOW_TILE , PAINT.BLACK : BLACK_TILE }
-
+var current_scene 
 const directions = [
 		Vector2i(-1,-1), Vector2i(1,-1),
 		Vector2i(-1,1), Vector2i(1,1),
@@ -28,11 +35,52 @@ var costs_black : Array[float] = []
 var flows_yellow : Array[Vector2i] = []
 var flows_black : Array[Vector2i] = []
 
+var reserved_cells : Dictionary = {}
+
 #const VALID_FLOORS : Array[Vector2i] = [YELLOW_TILE, BLACK_TILE, FLOOR_TILE]
 
-func _ready():
-	await get_tree().process_frame
+#func _ready():
+	#await get_tree().process_frame
+	#
 
+@export var game_over_time : float = 8
+
+func change_state(new_state : GAMESTATE):
+	game_state = new_state
+	match game_state:
+		GAMESTATE.GAME:
+			get_tree().paused = false
+		GAMESTATE.GAMEOVER:
+			get_tree().paused = true
+			UIManager.set_gameover_label(true)
+			await get_tree().create_timer(game_over_time).timeout
+			UIManager.set_gameover_label(false)
+			restart_level()
+
+func _process(delta: float) -> void:
+	update_state(delta)
+			
+func update_state(delta):
+	match game_state:
+		GAMESTATE.GAME:
+			pass
+			#if Input.is_action_just_pressed("toggle"):
+				#change_state(GameManager.GAMESTATE.GAMEOVER)
+			
+func restart_level():
+	call_deferred("_deferred_goto_scene", game_path)
+	
+func _deferred_goto_scene(path):
+	var scene_tree = get_tree().current_scene
+	if scene_tree != null:
+		scene_tree.free()
+		
+	var s = ResourceLoader.load(path)
+	current_scene = s.instantiate()
+	get_tree().root.add_child(current_scene)
+	get_tree().current_scene = current_scene
+	change_state(GameManager.GAMESTATE.GAME)
+			
 func build_heat_map(player_cell : Vector2i, color : PAINT):
 	var costs : Array[float] = costs_black if color == PAINT.BLACK else costs_yellow
 	costs.resize(ROWS * COLS)
@@ -62,6 +110,8 @@ func build_flow_field(player_cell : Vector2i):
 	build_heat_map(player_cell, PAINT.YELLOW)
 	build_flow_field_helper(player_cell, PAINT.BLACK)
 	build_flow_field_helper(player_cell, PAINT.YELLOW)
+	#print("yellow non-zero: ", flows_yellow.filter(func(f): return f != Vector2i.ZERO).size())
+	#print("black non-zero: ", flows_black.filter(func(f): return f != Vector2i.ZERO).size())
 	
 func get_neighbors(node : Vector2i, paint : PAINT):
 	var tile_color = paint_to_atlas_map[paint]
@@ -100,12 +150,12 @@ func build_flow_field_helper(player_cell : Vector2i, color : PAINT):
 			
 			flows[r * COLS + c] = best_dir
 	
-	queue_redraw()
+	#queue_redraw()
 	
 	
 func _draw():
 	#draw_heat_map()
-	draw_flow_field(flows_yellow, costs_yellow)
+	#draw_flow_field(flows_yellow, costs_yellow)
 	pass
 	
 
@@ -132,13 +182,13 @@ func draw_heat_map(costs : Array[float]):
 
 func draw_flow_field(flows : Array[Vector2i], costs : Array[float]):
 	if flows.is_empty():
-		print("flows is empty!")
+		#print("flows is empty!")
 		return
 	var non_zero = 0
 	for f in flows:
 		if f != Vector2i.ZERO:
 			non_zero += 1
-	print("non-zero flows: ", non_zero, " / ", flows.size())
+	#print("non-zero flows: ", non_zero, " / ", flows.size())
 	
 	for y in range(ROWS):
 		for x in range(COLS):

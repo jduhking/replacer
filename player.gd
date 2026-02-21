@@ -16,6 +16,9 @@ var elapsed_time : float = 0
 var current_speed : float = 0
 var was_moving : bool = false
 
+func _ready() -> void:
+	GameManager.player = self
+
 func _physics_process(delta: float) -> void:
 
 	var dir := Vector2(Input.get_axis("ui_left", "ui_right"), Input.get_axis("ui_up", "ui_down")).normalized()
@@ -24,7 +27,7 @@ func _physics_process(delta: float) -> void:
 	paint_floor()
 
 func move(dir : Vector2, delta : float):
-	var tilemap := GameManager.tiles
+	var tilemap = GameManager.tiles
 	var is_moving = dir.length() > 0
 
 	elapsed_time += delta
@@ -50,11 +53,11 @@ func move(dir : Vector2, delta : float):
 	was_moving = is_moving
 	
 func paint_floor():
-	var tilemap := GameManager.tiles
+	var tilemap = GameManager.tiles
 	if Input.is_action_just_pressed("toggle"):
 		paint = GameManager.PAINT.YELLOW if paint == GameManager.PAINT.BLACK else GameManager.PAINT.BLACK
 	var tilemap_position = tilemap.local_to_map(position)
-	var tile_source_id := tilemap.get_cell_source_id(tilemap_position)
+	var tile_source_id = tilemap.get_cell_source_id(tilemap_position)
 	
 	if tile_source_id != -1:
 		#print("atlas coord: ", tilemap.get_cell_atlas_coords(tilemap_position))

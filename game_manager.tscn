@@ -7,3 +7,4 @@
 z_index = 100
 script = ExtResource("1_70yv6")
 font = ExtResource("2_smx3j")
+game_over_time = 3.0
