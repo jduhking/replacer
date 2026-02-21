@@ -1,10 +1,13 @@
-[gd_scene load_steps=3 format=3 uid="uid://hh7dlryhrm63"]
+[gd_scene load_steps=5 format=3 uid="uid://boyeedfjdg2u5"]
 
-[ext_resource type="Script" path="res://ui_manager.gd" id="1_1r2qi"]
-[ext_resource type="FontFile" path="res://PressStart2P-Regular.ttf" id="2_quu8p"]
+[ext_resource type="Script" uid="uid://x6elosubkp1h" path="res://UI/ui_manager.gd" id="1_1r2qi"]
+[ext_resource type="FontFile" uid="uid://x2wt4saifcs6" path="res://UI/UI_res/PressStart2P-Regular.ttf" id="2_quu8p"]
+[ext_resource type="Texture2D" uid="uid://bvyhq3crr5xxq" path="res://UI/UI_res/tt-uidark-empty.png" id="3_o4hg6"]
+[ext_resource type="Texture2D" uid="uid://bao71klavwvto" path="res://UI/UI_res/tt-uilight-active.png" id="4_o4hg6"]
 
 [node name="UIManager" type="Node2D"]
 script = ExtResource("1_1r2qi")
+metadata/_edit_vertical_guides_ = [128.0]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = 7
@@ -91,3 +94,33 @@ theme_override_constants/shadow_outline_size = 0
 theme_override_fonts/font = ExtResource("2_quu8p")
 theme_override_font_sizes/font_size = 8
 text = "000000 "
+
+[node name="darkModeIndicator" type="TextureRect" parent="CanvasLayer/topBar/ColorRect"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -22.0
+offset_top = -12.0
+offset_right = 2.0
+offset_bottom = 12.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_o4hg6")
+
+[node name="lightModeIndicator" type="TextureRect" parent="CanvasLayer/topBar/ColorRect"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -4.0
+offset_top = -12.0
+offset_right = 20.0
+offset_bottom = 12.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_o4hg6")

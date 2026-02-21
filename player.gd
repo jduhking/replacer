@@ -57,11 +57,18 @@ func move(dir : Vector2, delta : float):
 	
 	was_moving = is_moving
 	
+func switch_paint():	
+	paint = GameManager.PAINT.YELLOW if paint == GameManager.PAINT.BLACK else GameManager.PAINT.BLACK
+	UIManager.set_mode_indicator(paint == GameManager.PAINT.YELLOW)
+
 func paint_floor():
 	if Input.is_action_just_pressed("toggle"):
 		paint = GameManager.PAINT.YELLOW if paint == GameManager.PAINT.BLACK else GameManager.PAINT.BLACK
+		switch_paint()
+	
 	var tile_position = GameManager.tiles.local_to_map(position)
 	var tile_source_id = GameManager.tiles.get_cell_source_id(tile_position)
+
 	
 	if tile_source_id != -1:
 		#print("atlas coord: ", GameManager.tiles.get_cell_atlas_coords(GameManager.tiles_position))

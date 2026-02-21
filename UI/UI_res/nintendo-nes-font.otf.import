@@ -2,13 +2,13 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://x2wt4saifcs6"
-path="res://.godot/imported/PressStart2P-Regular.ttf-2e69df3032d4029e990523871515f718.fontdata"
+uid="uid://b4rb0tqvq2huo"
+path="res://.godot/imported/nintendo-nes-font.otf-707366081cba24f0ecb7c2f8f0a2c89f.fontdata"
 
 [deps]
 
-source_file="res://PressStart2P-Regular.ttf"
-dest_files=["res://.godot/imported/PressStart2P-Regular.ttf-2e69df3032d4029e990523871515f718.fontdata"]
+source_file="res://UI/UI_res/nintendo-nes-font.otf"
+dest_files=["res://.godot/imported/nintendo-nes-font.otf-707366081cba24f0ecb7c2f8f0a2c89f.fontdata"]
 
 [params]
 
