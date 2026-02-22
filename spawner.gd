@@ -17,7 +17,6 @@ var enemy_map = { "basic" : preload("res://Enemies/normal-enemy.tscn"), "ranged"
 @onready var default_percent_map = { "basic" : default_basic_percentage, "ranged" : default_ranged_percentage, "elite" : default_elite_percentage }
 
 @onready var enemy_percent_map = default_percent_map
-var mapped_enemy_percentages = []
 # Called when the node enters the scene tree for the first time.
 var color : GameManager.PAINT = GameManager.PAINT.YELLOW
 
@@ -32,29 +31,6 @@ var random_grid_pos : Vector2i
 
 func _ready() -> void:
 	change_state(STATE.FOLLOW)
-	if mapped_enemy_percentages.size() <= 0:
-		mapped_enemy_percentages = percent_mapper(enemy_percent_map.keys(), enemy_percent_map.values())
-
-static func percent_mapper(input_arr : Array, percent_arr : Array) -> Dictionary:
-	assert(input_arr.size() == percent_arr.size()) # they need to be the same size
-	var perc_to_index = {}
-	var acc = 0.0
-	
-	
-	for i in percent_arr.size():
-		var weight = percent_arr[i]
-		var range_start = acc
-		var range_end = acc + weight
-		
-		# fill up the lookup table for each percentage in the range
-		
-		for step in range(range_start * 10.0, range_end * 10.0):
-			perc_to_index[str(step / 10.0)] = input_arr[i]
-			
-		acc += weight
-		
-	return perc_to_index
-	
 
 func change_state(new_state : STATE):
 	current_state = new_state
@@ -88,8 +64,14 @@ func follow_player():
 	grid_position = GameManager.tiles.local_to_map(GameManager.player.position)
 	
 func select_enemy():
-	var rand_val = min(snappedf(randf(), 0.1), 0.9)
-	return mapped_enemy_percentages[str(rand_val)]
+	var rand_val = randf()
+	var acc = 0.0
+	for key in enemy_percent_map.keys():
+		acc += enemy_percent_map[key]
+		if rand_val < acc:
+			return key
+			
+	return enemy_percent_map.keys()[-1]  # fallback to last
 	
 func spawn_enemy(enemy_name : String, grid_pos : Vector2i):
 	var enemy : Enemy = (enemy_map[enemy_name] as PackedScene).instantiate()

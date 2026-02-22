@@ -3,7 +3,7 @@ extends Node2D
 @export var tiles : TileMapLayer
 @export var font : Font
 
-enum PAINT { YELLOW, BLACK }
+enum PAINT { ALL, YELLOW, BLACK }
 enum GAMESTATE { NONE, GAME, GAMEOVER }
 var game_state : GAMESTATE = GAMESTATE.NONE
 var debug : bool = false
@@ -37,8 +37,10 @@ const directions = [
 
 var costs_yellow : Array[float] = []
 var costs_black : Array[float] = []
+var costs_all : Array[float] = []
 var flows_yellow : Array[Vector2i] = []
 var flows_black : Array[Vector2i] = []
+var flows_all : Array[Vector2i] = []
 
 var reserved_cells : Dictionary = {}
 
@@ -70,10 +72,11 @@ func change_state(new_state : GAMESTATE):
 	match game_state:
 		GAMESTATE.GAME:
 			elapsed_time = 0
+			UIManager.set_mode_indicator(true)
 			UIManager.set_top_bar(true)
 			score = 0
 			get_tree().paused = false
-			load_data(SAVE_FILE_NAME)		
+			on_load()	
 			highscore = data.highscore
 			UIManager.update_highscore(highscore)
 			
@@ -82,7 +85,7 @@ func change_state(new_state : GAMESTATE):
 			if score > highscore:
 				highscore = score
 				data.highscore = highscore
-				save_data(SAVE_FILE_NAME)
+				on_save()
 				UIManager.update_highscore(highscore)
 			get_tree().paused = true
 			UIManager.set_gameover_label(true)
@@ -115,7 +118,7 @@ func _deferred_goto_scene(path):
 	get_tree().current_scene = current_scene
 			
 func build_heat_map(player_cell : Vector2i, color : PAINT):
-	var costs : Array[float] = costs_black if color == PAINT.BLACK else costs_yellow
+	var costs : Array[float] = costs_black if color == PAINT.BLACK else costs_yellow if color == PAINT.YELLOW else costs_all
 	costs.resize(ROWS * COLS)
 	costs.fill(INF)
 	var visited : Array[bool] = []
@@ -141,35 +144,31 @@ func build_heat_map(player_cell : Vector2i, color : PAINT):
 func build_flow_field(player_cell : Vector2i):
 	build_heat_map(player_cell, PAINT.BLACK)
 	build_heat_map(player_cell, PAINT.YELLOW)
+	build_heat_map(player_cell, PAINT.ALL)
 	build_flow_field_helper(player_cell, PAINT.BLACK)
 	build_flow_field_helper(player_cell, PAINT.YELLOW)
+	build_flow_field_helper(player_cell, PAINT.ALL)
 	#print("yellow non-zero: ", flows_yellow.filter(func(f): return f != Vector2i.ZERO).size())
 	#print("black non-zero: ", flows_black.filter(func(f): return f != Vector2i.ZERO).size())
 	
 func get_neighbors(node : Vector2i, paint : PAINT):
-	var tile_color = paint_to_atlas_map[paint]
+	
+	var tile_color = paint_to_atlas_map[paint] if paint != GameManager.PAINT.ALL else GameManager.BLACK_TILE
 	var neighbors : Array[Vector2i] = []
 	for dir in directions:
 		var next = node + dir
 		if next.x >= 0 and next.y >= 0 and next.x < COLS and next.y < ROWS:
 			var neighbor_color = tiles.get_cell_atlas_coords(next)
-			if tile_color == neighbor_color:
+			if (tile_color == neighbor_color) or (paint == PAINT.ALL):
 				neighbors.append(next)
 	return neighbors
 	
 	
-func get_neighbors_all(node : Vector2i):
-	var neighbors : Array[Vector2i] = []
-	for dir in directions:
-		var next = node + dir
-		if next.x >= 0 and next.y >= 0 and next.x < COLS and next.y < ROWS:
-				neighbors.append(next)
-	return neighbors
 	
 func build_flow_field_helper(player_cell : Vector2i, color : PAINT):
 	
-	var flows : Array[Vector2i] = flows_black if color == PAINT.BLACK else flows_yellow
-	var costs : Array[float] = costs_black if color == PAINT.BLACK else costs_yellow
+	var flows : Array[Vector2i] = flows_black if color == PAINT.BLACK else flows_yellow if color == PAINT.YELLOW else flows_all
+	var costs : Array[float] = costs_black if color == PAINT.BLACK else costs_yellow if color == PAINT.YELLOW else costs_all
 	flows.clear()
 	flows.resize(ROWS * COLS)
 	flows.fill(Vector2i.ZERO)

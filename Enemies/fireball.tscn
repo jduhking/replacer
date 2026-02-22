@@ -1,15 +1,43 @@
-[gd_scene load_steps=2 format=3 uid="uid://wc5m8iaavkqi"]
+[gd_scene load_steps=7 format=3 uid="uid://wc5m8iaavkqi"]
 
 [ext_resource type="Script" uid="uid://dni6raril1cxa" path="res://Enemies/fireball.gd" id="1_sl0pu"]
+[ext_resource type="Texture2D" uid="uid://ck117s7d4r43t" path="res://energy.png" id="2_r52dm"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_al2w3"]
+atlas = ExtResource("2_r52dm")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i8q65"]
+atlas = ExtResource("2_r52dm")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u6ic4"]
+atlas = ExtResource("2_r52dm")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_a2mec"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_al2w3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_i8q65")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u6ic4")
+}],
+"loop": true,
+"name": &"default",
+"speed": 10.0
+}]
 
 [node name="Fireball" type="Node2D"]
 script = ExtResource("1_sl0pu")
 
-[node name="ColorRect" type="ColorRect" parent="."]
-offset_left = -6.0
-offset_top = -6.0
-offset_right = 6.0
-offset_bottom = 6.0
-color = Color(1, 0.03769995, 0.32305616, 1)
-
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_a2mec")
+autoplay = "default"
+frame_progress = 0.64285064
