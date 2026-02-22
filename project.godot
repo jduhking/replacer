@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Replacer"
-run/main_scene="uid://d4lyudbejw7kj"
+run/main_scene="uid://egt0i18ft1y4"
 config/features=PackedStringArray("4.5", "GL Compatibility")
 config/icon="res://icon.svg"
 

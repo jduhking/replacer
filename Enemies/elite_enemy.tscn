@@ -96,6 +96,7 @@ _data = {
 }
 
 [node name="EliteEnemy" type="CharacterBody2D"]
+collision_layer = 0
 script = ExtResource("1_qrumr")
 movement_speed = 50.0
 

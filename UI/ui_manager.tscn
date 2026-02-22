@@ -42,6 +42,7 @@ grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
 [node name="topBar" type="HBoxContainer" parent="CanvasLayer"]
+visible = false
 offset_right = 256.0
 offset_bottom = 32.0
 

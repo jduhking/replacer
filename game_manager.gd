@@ -5,13 +5,17 @@ extends Node2D
 
 enum PAINT { YELLOW, BLACK }
 enum GAMESTATE { NONE, GAME, GAMEOVER }
-var game_state : GAMESTATE = GAMESTATE.GAME
-
+var game_state : GAMESTATE = GAMESTATE.NONE
+var debug : bool = false
 const game_path = "res://game.tscn"
 
 const CELL_SIZE = 16;
 const COLS := int(256 / CELL_SIZE)
 const ROWS := int(224 / CELL_SIZE)
+
+var data = Saves.new()
+const SAVE_DIR = "user://saves/"
+const SAVE_FILE_NAME = "save.json"
 
 
 const YELLOW_TILE : Vector2i = Vector2i(6,2)
@@ -42,6 +46,7 @@ var painted_cells : Dictionary = { }
 
 var elapsed_time : float = 0
 var score : float = 0
+var highscore : int
 signal points_updated
 signal game_ended 
 
@@ -54,6 +59,7 @@ signal game_ended
 @export var game_over_time : float = 8
 
 func _ready():
+	verify_save_directory(SAVE_DIR)
 	points_updated.connect(_on_points_updated)
 
 func _on_points_updated():
@@ -64,10 +70,20 @@ func change_state(new_state : GAMESTATE):
 	match game_state:
 		GAMESTATE.GAME:
 			elapsed_time = 0
+			UIManager.set_top_bar(true)
+			score = 0
 			get_tree().paused = false
+			load_data(SAVE_FILE_NAME)		
+			highscore = data.highscore
+			UIManager.update_highscore(highscore)
 			
 		GAMESTATE.GAMEOVER:
 			game_ended.emit()
+			if score > highscore:
+				highscore = score
+				data.highscore = highscore
+				save_data(SAVE_FILE_NAME)
+				UIManager.update_highscore(highscore)
 			get_tree().paused = true
 			UIManager.set_gameover_label(true)
 			await get_tree().create_timer(game_over_time).timeout
@@ -97,7 +113,6 @@ func _deferred_goto_scene(path):
 	current_scene = s.instantiate()
 	get_tree().root.add_child(current_scene)
 	get_tree().current_scene = current_scene
-	change_state(GameManager.GAMESTATE.GAME)
 			
 func build_heat_map(player_cell : Vector2i, color : PAINT):
 	var costs : Array[float] = costs_black if color == PAINT.BLACK else costs_yellow
@@ -241,6 +256,50 @@ func spawn_points(value : int, pos : Vector2):
 	p.init(value, pos)
 	get_tree().current_scene.add_child(p)
 	
+
+func verify_save_directory(path: String):
+	DirAccess.make_dir_absolute(path)
+	
+func save_data(path: String):
+	var file = FileAccess.open(path, FileAccess.WRITE)
+	if file == null: 
+		print(FileAccess.get_open_error())
+		return
+		
+	var data = {
+		"data" : {
+			"highscore" : data.highscore,
+		}
+	}
+	
+	var json_string = JSON.stringify(data, "\t")
+	file.store_string(json_string)
+	file.close()
+
+func load_data(path: String):
+	if FileAccess.file_exists(path): 
+		var file = FileAccess.open(path, FileAccess.READ)
+		if file == null:
+			print(FileAccess.get_open_error())
+			return
+		var content = file.get_as_text()
+		file.close()
+		
+		var data_json = JSON.parse_string(content)
+		if data_json == null:
+			printerr("Cannot parse %s as a json_string: (%s)" % [path, content])
+			return 
+			
+		data = Saves.new()
+		data.highscore = data_json.data.highscore
+	else:
+		printerr("Cannot open non-existent file at %s!" % [path])
+	
+func on_save():
+	save_data(SAVE_DIR + SAVE_FILE_NAME)
+
+func on_load():
+	load_data(SAVE_DIR + SAVE_FILE_NAME)
 	
 	
 	
