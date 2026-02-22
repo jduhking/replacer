@@ -33,6 +33,8 @@ func _on_paint(cell : Vector2i):
 	GameManager.painted_cells[cell] = true
 
 func _physics_process(delta: float) -> void:
+	if GameManager.game_state == GameManager.GAMESTATE.GAMEOVER:
+		return
 
 	var dir := Vector2(Input.get_axis("ui_left", "ui_right"), Input.get_axis("ui_up", "ui_down")).normalized()
 

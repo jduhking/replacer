@@ -17,6 +17,7 @@ var data = Saves.new()
 const SAVE_DIR = "user://saves/"
 const SAVE_FILE_NAME = "save.json"
 
+@onready var game_over_sound : AudioStreamPlayer2D = $GameOverSound
 
 const YELLOW_TILE : Vector2i = Vector2i(6,2)
 const BLACK_TILE : Vector2i = Vector2i(6,6)
@@ -76,19 +77,19 @@ func change_state(new_state : GAMESTATE):
 			UIManager.set_mode_indicator(true)
 			UIManager.set_top_bar(true)
 			score = 0
-			get_tree().paused = false
 			on_load()	
 			highscore = data.highscore
 			UIManager.update_highscore(highscore)
 			
 		GAMESTATE.GAMEOVER:
+			get_tree().current_scene.game_theme.stop()
+			game_over_sound.play()
 			game_ended.emit()
 			if score > highscore:
 				highscore = score
 				data.highscore = highscore
 				on_save()
 				UIManager.update_highscore(highscore)
-			get_tree().paused = true
 			UIManager.set_gameover_label(true)
 			await get_tree().create_timer(game_over_time).timeout
 			UIManager.set_gameover_label(false)

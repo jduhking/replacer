@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://egt0i18ft1y4"]
+[gd_scene load_steps=8 format=3 uid="uid://egt0i18ft1y4"]
 
 [ext_resource type="Shader" uid="uid://t0vbrixogbrx" path="res://crt_shader.gdshader" id="1_05l2w"]
 [ext_resource type="Texture2D" uid="uid://cxmcnveyvk7gt" path="res://UI/UI_res/RM-title.png" id="1_ak2if"]
 [ext_resource type="Script" uid="uid://bfx3nb7hp6okn" path="res://title_screen.gd" id="1_ig5kc"]
 [ext_resource type="FontFile" uid="uid://x2wt4saifcs6" path="res://UI/UI_res/PressStart2P-Regular.ttf" id="2_ig5kc"]
+[ext_resource type="AudioStream" uid="uid://d2mfmh3hbf1yl" path="res://through space.mp3" id="5_hafda"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_hafda"]
 shader = ExtResource("1_05l2w")
@@ -147,5 +148,8 @@ layout_mode = 0
 offset_right = 256.0
 offset_bottom = 256.0
 color = Color(0, 0, 0, 1)
+
+[node name="TitleScreenMusic" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("5_hafda")
 
 [connection signal="timeout" from="ColorRect/VBoxContainer/startText/Timer" to="." method="_on_timer_timeout"]

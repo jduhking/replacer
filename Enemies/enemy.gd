@@ -32,6 +32,8 @@ func _ready() -> void:
 	position = GameManager.tiles.map_to_local(target_cell)
 
 func _physics_process(delta: float) -> void:
+	if GameManager.game_state == GameManager.GAMESTATE.GAMEOVER:
+		return
 	move(delta)
 	
 func _process(delta: float) -> void:

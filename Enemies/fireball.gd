@@ -12,6 +12,8 @@ func init(direction : Vector2, speed : float):
 	shoot_speed = speed
 	
 func _physics_process(delta: float) -> void:
+	if GameManager.game_state == GameManager.GAMESTATE.GAMEOVER:
+		return
 	position += shoot_speed * delta * dir
 
 	var current_tile = GameManager.tiles.local_to_map(position)

@@ -58,6 +58,8 @@ func update_state(delta):
 				
 			
 func _physics_process(delta: float) -> void:
+	if GameManager.game_state == GameManager.GAMESTATE.GAMEOVER:
+		return
 	aim_player()
 	update_state(delta)
  

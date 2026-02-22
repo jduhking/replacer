@@ -2,7 +2,9 @@ extends Control
 
 @onready var blink_label : Label = $ColorRect/VBoxContainer/startText  # adjust path
 var started : bool = false
+@onready var title_screen_music : AudioStreamPlayer2D = $TitleScreenMusic
 func _ready():
+	title_screen_music.play()
 	$ColorRect/VBoxContainer/startText/Timer.start()
 
 func _on_timer_timeout():
@@ -14,6 +16,7 @@ func _on_timer_timeout():
 func _process(delta: float) -> void:
 	if Input.is_anything_pressed():
 		started = true
+		title_screen_music.stop()
 		_on_start_pressed()
 
 func _on_start_pressed():

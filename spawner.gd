@@ -82,11 +82,15 @@ func spawn_enemy(enemy_name : String, grid_pos : Vector2i):
 	get_parent().add_child(enemy)
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	if GameManager.game_state == GameManager.GAMESTATE.GAMEOVER:
+		return
 	var atlas = GameManager.tiles.get_cell_atlas_coords(grid_position)
 	color = GameManager.PAINT.YELLOW if atlas == GameManager.YELLOW_TILE else (GameManager.PAINT.BLACK if atlas == GameManager.BLACK_TILE else color)
 	queue_redraw()
 	
 func _physics_process(delta: float) -> void:
+	if GameManager.game_state == GameManager.GAMESTATE.GAMEOVER:
+		return
 	if not spawning_random:
 		random_spawn_elapsed_time += delta
 		if random_spawn_elapsed_time >= random_spawn_time:
