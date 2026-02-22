@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=4 uid="uid://d4lyudbejw7kj"]
+[gd_scene load_steps=10 format=4 uid="uid://d4lyudbejw7kj"]
 
 [ext_resource type="PackedScene" uid="uid://mwf2y88ejmqg" path="res://player.tscn" id="1_80nbo"]
 [ext_resource type="Script" uid="uid://q600ufaexe26" path="res://game.gd" id="1_feb5d"]
 [ext_resource type="Texture2D" uid="uid://d52ik3w2n21y" path="res://tiles.png" id="2_e2o6t"]
 [ext_resource type="PackedScene" uid="uid://bq774yv1n86s5" path="res://spawner.tscn" id="4_fc0e3"]
 [ext_resource type="Script" uid="uid://8afsmfocieow" path="res://main_camera.gd" id="5_7jktm"]
+[ext_resource type="Shader" uid="uid://t0vbrixogbrx" path="res://crt_shader.gdshader" id="6_ryrav"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_feb5d"]
 texture = ExtResource("2_e2o6t")
@@ -251,6 +252,30 @@ texture = ExtResource("2_e2o6t")
 physics_layer_0/collision_layer = 1
 sources/0 = SubResource("TileSetAtlasSource_feb5d")
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_eow3j"]
+shader = ExtResource("6_ryrav")
+shader_parameter/overlay = true
+shader_parameter/scanlines_opacity = 0.0
+shader_parameter/scanlines_width = 0.0
+shader_parameter/grille_opacity = 0.0
+shader_parameter/resolution = Vector2(256, 224)
+shader_parameter/pixelate = true
+shader_parameter/roll = true
+shader_parameter/roll_speed = 8.0
+shader_parameter/roll_size = 15.0
+shader_parameter/roll_variation = 1.8
+shader_parameter/distort_intensity = 0.0250000011875
+shader_parameter/noise_opacity = 0.1410000066975
+shader_parameter/noise_speed = 5.0
+shader_parameter/static_noise_intensity = 0.06
+shader_parameter/aberration = 0.03
+shader_parameter/brightness = 1.4
+shader_parameter/discolor = true
+shader_parameter/warp_amount = 0.14400000684
+shader_parameter/clip_warp = false
+shader_parameter/vignette_intensity = 0.4
+shader_parameter/vignette_opacity = 0.5
+
 [node name="Game" type="Node2D"]
 script = ExtResource("1_feb5d")
 
@@ -266,3 +291,13 @@ position = Vector2(156, 91)
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(128, 112)
 script = ExtResource("5_7jktm")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 3
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+z_index = 2
+material = SubResource("ShaderMaterial_eow3j")
+offset_right = 256.0
+offset_bottom = 224.0
+color = Color(0, 0, 0, 1)

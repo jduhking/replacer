@@ -1,10 +1,60 @@
-[gd_scene load_steps=4 format=3 uid="uid://egt0i18ft1y4"]
+[gd_scene load_steps=7 format=3 uid="uid://egt0i18ft1y4"]
 
+[ext_resource type="Shader" uid="uid://t0vbrixogbrx" path="res://crt_shader.gdshader" id="1_05l2w"]
 [ext_resource type="Texture2D" uid="uid://cxmcnveyvk7gt" path="res://UI/UI_res/RM-title.png" id="1_ak2if"]
 [ext_resource type="Script" uid="uid://bfx3nb7hp6okn" path="res://title_screen.gd" id="1_ig5kc"]
 [ext_resource type="FontFile" uid="uid://x2wt4saifcs6" path="res://UI/UI_res/PressStart2P-Regular.ttf" id="2_ig5kc"]
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hafda"]
+shader = ExtResource("1_05l2w")
+shader_parameter/overlay = true
+shader_parameter/scanlines_opacity = 0.400000019
+shader_parameter/scanlines_width = 0.250000011875
+shader_parameter/grille_opacity = 0.3
+shader_parameter/resolution = Vector2(640, 360)
+shader_parameter/pixelate = true
+shader_parameter/roll = true
+shader_parameter/roll_speed = 8.0
+shader_parameter/roll_size = 15.0
+shader_parameter/roll_variation = 1.8
+shader_parameter/distort_intensity = 0.050000002375
+shader_parameter/noise_opacity = 0.400000019
+shader_parameter/noise_speed = 5.0
+shader_parameter/static_noise_intensity = 0.06
+shader_parameter/aberration = 0.03
+shader_parameter/brightness = 1.4
+shader_parameter/discolor = true
+shader_parameter/warp_amount = 1.0
+shader_parameter/clip_warp = false
+shader_parameter/vignette_intensity = 0.4
+shader_parameter/vignette_opacity = 0.5
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_05l2w"]
+shader = ExtResource("1_05l2w")
+shader_parameter/overlay = true
+shader_parameter/scanlines_opacity = 0.4
+shader_parameter/scanlines_width = 0.25
+shader_parameter/grille_opacity = 0.3
+shader_parameter/resolution = Vector2(256, 224)
+shader_parameter/pixelate = true
+shader_parameter/roll = true
+shader_parameter/roll_speed = 8.0
+shader_parameter/roll_size = 15.0
+shader_parameter/roll_variation = 1.91300008760762
+shader_parameter/distort_intensity = 0.094000004465
+shader_parameter/noise_opacity = 0.4
+shader_parameter/noise_speed = 5.0
+shader_parameter/static_noise_intensity = 0.06
+shader_parameter/aberration = 0.03
+shader_parameter/brightness = 1.4
+shader_parameter/discolor = true
+shader_parameter/warp_amount = 0.22400001064
+shader_parameter/clip_warp = false
+shader_parameter/vignette_intensity = 0.4
+shader_parameter/vignette_opacity = 0.5
+
 [node name="TitleScreen" type="Control"]
+material = SubResource("ShaderMaterial_hafda")
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -21,6 +71,7 @@ offset_bottom = 256.0
 color = Color(0, 0, 0, 1)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ColorRect"]
+use_parent_material = true
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -36,16 +87,19 @@ grow_vertical = 2
 theme_override_constants/separation = 8
 
 [node name="Title" type="TextureRect" parent="ColorRect/VBoxContainer"]
+use_parent_material = true
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
 texture = ExtResource("1_ak2if")
 
 [node name="MarginContainer" type="MarginContainer" parent="ColorRect/VBoxContainer"]
+use_parent_material = true
 layout_mode = 2
 theme_override_constants/margin_top = 0
 
 [node name="startText" type="Label" parent="ColorRect/VBoxContainer"]
+use_parent_material = true
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 8
@@ -86,5 +140,12 @@ text = "JAMES 0.
 LANZDANINJA
 CAMMI"
 vertical_alignment = 2
+
+[node name="ColorRect" type="ColorRect" parent="ColorRect"]
+material = SubResource("ShaderMaterial_05l2w")
+layout_mode = 0
+offset_right = 256.0
+offset_bottom = 256.0
+color = Color(0, 0, 0, 1)
 
 [connection signal="timeout" from="ColorRect/VBoxContainer/startText/Timer" to="." method="_on_timer_timeout"]

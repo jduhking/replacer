@@ -10,7 +10,7 @@ script = ExtResource("1_1r2qi")
 metadata/_edit_vertical_guides_ = [128.0]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
-layer = 7
+layer = 3
 
 [node name="GameOverLabel" type="Label" parent="CanvasLayer"]
 visible = false
