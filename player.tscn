@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://mwf2y88ejmqg"]
+[gd_scene load_steps=12 format=3 uid="uid://mwf2y88ejmqg"]
 
 [ext_resource type="Script" uid="uid://daf7o18vnq3y8" path="res://player.gd" id="1_4flbx"]
 [ext_resource type="Texture2D" uid="uid://cwb0yuq8v0mp1" path="res://Char-Sheet.png" id="2_onrkg"]
@@ -18,7 +18,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [0]
+"values": [4]
 }
 
 [sub_resource type="Animation" id="Animation_hqtel"]
@@ -92,9 +92,45 @@ tracks/0/keys = {
 "values": [5, 6, 7, 6]
 }
 
+[sub_resource type="Animation" id="Animation_1jxqw"]
+resource_name = "death-yellow"
+length = 0.5
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [12, 13, 14, 15, 16]
+}
+
+[sub_resource type="Animation" id="Animation_dw050"]
+resource_name = "death-black"
+length = 0.5
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [17, 18, 19, 20, 21]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_2hs0m"]
 _data = {
 &"RESET": SubResource("Animation_sweqy"),
+&"death-black": SubResource("Animation_dw050"),
+&"death-yellow": SubResource("Animation_1jxqw"),
 &"idle-black": SubResource("Animation_hqtel"),
 &"idle-yellow": SubResource("Animation_i3pqv"),
 &"walk-black": SubResource("Animation_onrkg"),
@@ -111,7 +147,8 @@ shape = SubResource("RectangleShape2D_mwb40")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("2_onrkg")
-hframes = 12
+hframes = 22
+frame = 4
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {

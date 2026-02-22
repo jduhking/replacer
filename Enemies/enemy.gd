@@ -19,9 +19,10 @@ var dir : Vector2
 var target_cell : Vector2i = Vector2i.ZERO
 var is_moving : bool = false
 
+
 func _ready() -> void:
 	await get_tree().process_frame
-	GameManager.tiles = GameManager.tiles
+	
 	target_cell = GameManager.tiles.local_to_map(position)
 	var atlas = GameManager.tiles.get_cell_atlas_coords(target_cell)
 	var valid = GameManager.paint_to_atlas_map[paint]
@@ -73,17 +74,6 @@ func check_if_can_kill_player():
 	var current_cell = GameManager.tiles.local_to_map(position)
 	if current_cell == GameManager.tiles.local_to_map(GameManager.player.position):
 		GameManager.change_state(GameManager.GAMESTATE.GAMEOVER)
-
-func paint_floor():
-	if Input.is_action_just_pressed("toggle"):
-		paint = GameManager.PAINT.YELLOW if paint == GameManager.PAINT.BLACK else GameManager.PAINT.BLACK
-	var tiles_position = GameManager.tiles.local_to_map(position)
-	var tile_source_id := GameManager.tiles.get_cell_source_id(tiles_position)
-	
-	if tile_source_id != -1:
-		#print("atlas coord: ", GameManager.tiles.get_cell_atlas_coords(GameManager.tiles_position))
-		#if GameManager.tiles.get_cell_atlas_coords(GameManager.tiles_position) in GameManager.VALID_FLOORS:
-		GameManager.tiles.set_cell(GameManager.tiles_position, tile_source_id, GameManager.paint_to_atlas_map[paint] ,GameManager.tiles.get_cell_alternative_tile(GameManager.tiles_position))
 
 
 #func print_current_cell():

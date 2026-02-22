@@ -43,6 +43,7 @@ var painted_cells : Dictionary = { }
 var elapsed_time : float = 0
 var score : float = 0
 signal points_updated
+signal game_ended 
 
 #const VALID_FLOORS : Array[Vector2i] = [YELLOW_TILE, BLACK_TILE, FLOOR_TILE]
 
@@ -66,6 +67,7 @@ func change_state(new_state : GAMESTATE):
 			get_tree().paused = false
 			
 		GAMESTATE.GAMEOVER:
+			game_ended.emit()
 			get_tree().paused = true
 			UIManager.set_gameover_label(true)
 			await get_tree().create_timer(game_over_time).timeout
@@ -137,6 +139,15 @@ func get_neighbors(node : Vector2i, paint : PAINT):
 		if next.x >= 0 and next.y >= 0 and next.x < COLS and next.y < ROWS:
 			var neighbor_color = tiles.get_cell_atlas_coords(next)
 			if tile_color == neighbor_color:
+				neighbors.append(next)
+	return neighbors
+	
+	
+func get_neighbors_all(node : Vector2i):
+	var neighbors : Array[Vector2i] = []
+	for dir in directions:
+		var next = node + dir
+		if next.x >= 0 and next.y >= 0 and next.x < COLS and next.y < ROWS:
 				neighbors.append(next)
 	return neighbors
 	

@@ -10,10 +10,11 @@ var grid_position : Vector2i = Vector2i.ZERO
 @export var follow_offset : Vector2 = Vector2(-2,0)
 @export var spawn_indicator : Texture2D
 
-var enemy_map = { "basic" : preload("res://Enemies/normal-enemy.tscn"), "ranged" : preload("res://Enemies/ranged-enemy.tscn")}
-@export var default_basic_percentage : float = 0.8
-@export var default_ranged_percentage : float = 0.2
-@onready var default_percent_map = { "basic" : default_basic_percentage, "ranged" : default_ranged_percentage }
+var enemy_map = { "basic" : preload("res://Enemies/normal-enemy.tscn"), "ranged" : preload("res://Enemies/ranged-enemy.tscn"), "elite" : preload("res://Enemies/elite_enemy.tscn")}
+@export var default_basic_percentage : float = 0.6
+@export var default_ranged_percentage : float = 0.3
+@export var default_elite_percentage : float = 0.1
+@onready var default_percent_map = { "basic" : default_basic_percentage, "ranged" : default_ranged_percentage, "elite" : default_elite_percentage }
 
 @onready var enemy_percent_map = default_percent_map
 var mapped_enemy_percentages = []

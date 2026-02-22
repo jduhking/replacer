@@ -24,6 +24,10 @@ signal painted(cell : Vector2i)
 func _ready() -> void:
 	GameManager.player = self
 	painted.connect(_on_paint)
+	GameManager.game_ended.connect(_on_game_over)
+	
+func _on_game_over():
+	pass
 	
 func _on_paint(cell : Vector2i):
 	GameManager.painted_cells[cell] = true

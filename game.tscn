@@ -262,4 +262,5 @@ position = Vector2(156, 91)
 
 [node name="Spawner" parent="." instance=ExtResource("4_fc0e3")]
 default_basic_percentage = 0.1
-default_ranged_percentage = 0.9
+default_ranged_percentage = 0.1
+default_elite_percentage = 0.8
