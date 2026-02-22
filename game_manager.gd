@@ -20,6 +20,7 @@ const FLOOR_TILE : Vector2i = Vector2i(6,10)
 const WALL_TILE : Vector2i = Vector2i(3,10)
 
 var player : Player
+@onready var points = preload("res://points.tscn")
 
 var paint_to_atlas_map = { PAINT.YELLOW : YELLOW_TILE , PAINT.BLACK : BLACK_TILE }
 var current_scene 
@@ -39,6 +40,9 @@ var reserved_cells : Dictionary = {}
 
 var painted_cells : Dictionary = { }
 
+var elapsed_time : float = 0
+var score : float = 0
+signal points_updated
 
 #const VALID_FLOORS : Array[Vector2i] = [YELLOW_TILE, BLACK_TILE, FLOOR_TILE]
 
@@ -48,10 +52,17 @@ var painted_cells : Dictionary = { }
 
 @export var game_over_time : float = 8
 
+func _ready():
+	points_updated.connect(_on_points_updated)
+
+func _on_points_updated():
+	UIManager.update_score(elapsed_time, score)
+	
 func change_state(new_state : GAMESTATE):
 	game_state = new_state
 	match game_state:
 		GAMESTATE.GAME:
+			elapsed_time = 0
 			get_tree().paused = false
 			
 		GAMESTATE.GAMEOVER:
@@ -67,7 +78,8 @@ func _process(delta: float) -> void:
 func update_state(delta):
 	match game_state:
 		GAMESTATE.GAME:
-			pass
+			elapsed_time += delta
+			points_updated.emit()
 			#if Input.is_action_just_pressed("toggle"):
 				#change_state(GameManager.GAMESTATE.GAMEOVER)
 			
@@ -159,7 +171,7 @@ func build_flow_field_helper(player_cell : Vector2i, color : PAINT):
 	
 func _draw():
 	#draw_heat_map()
-	#draw_flow_field(flows_yellow, costs_yellow)
+	draw_flow_field(flows_yellow, costs_yellow)
 	pass
 	
 
@@ -202,7 +214,22 @@ func draw_flow_field(flows : Array[Vector2i], costs : Array[float]):
 			var dir = flows[idx]
 			if dir == Vector2i.ZERO:
 				continue
+			#print("dir ", dir)
 			var center = Vector2(x * CELL_SIZE + CELL_SIZE / 2.0, y * CELL_SIZE + CELL_SIZE / 2.0)
-			var target = center + Vector2(dir) * (CELL_SIZE / 2.0 - 2)
+			var target = center + Vector2(dir).normalized() * (CELL_SIZE / 2.0 - 2)
 			draw_line(center, target, Color.RED, 1.0)
+	
+func spawn_particle(particle : PackedScene, pos : Vector2):
+	var p : Node2D = particle.instantiate()
+	p.position = pos
+	get_tree().current_scene.add_child(p)
+	
+func spawn_points(value : int, pos : Vector2):
+	var p : Points = points.instantiate()
+	p.position = pos
+	p.init(value, pos)
+	get_tree().current_scene.add_child(p)
+	
+	
+	
 	

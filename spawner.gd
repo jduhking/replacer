@@ -8,9 +8,7 @@ var elapsed_time: float = 0
 @export var spawn_time : float = 0.4
 var grid_position : Vector2i = Vector2i.ZERO
 @export var follow_offset : Vector2 = Vector2(-2,0)
-
-@export var black : Color
-@export var yellow : Color
+@export var spawn_indicator : Texture2D
 
 var enemy_map = { "basic" : preload("res://Enemies/normal-enemy.tscn"), "ranged" : preload("res://Enemies/ranged-enemy.tscn")}
 @export var default_basic_percentage : float = 0.8
@@ -21,7 +19,7 @@ var enemy_map = { "basic" : preload("res://Enemies/normal-enemy.tscn"), "ranged"
 var mapped_enemy_percentages = []
 # Called when the node enters the scene tree for the first time.
 var color : GameManager.PAINT = GameManager.PAINT.YELLOW
-@onready var color_map = { GameManager.PAINT.YELLOW : yellow, GameManager.PAINT.BLACK : black }
+
 
 var random_spawn_time : float = 6
 var random_spawn_elapsed_time : float = 0
@@ -103,7 +101,6 @@ func spawn_enemy(enemy_name : String, grid_pos : Vector2i):
 func _process(delta: float) -> void:
 	var atlas = GameManager.tiles.get_cell_atlas_coords(grid_position)
 	color = GameManager.PAINT.YELLOW if atlas == GameManager.YELLOW_TILE else (GameManager.PAINT.BLACK if atlas == GameManager.BLACK_TILE else color)
-	$ColorRect.color = color_map[color]
 	queue_redraw()
 	
 func _physics_process(delta: float) -> void:
@@ -127,10 +124,10 @@ func _draw() -> void:
 	if GameManager.tiles == null:
 		return
 	var cell_world_pos = GameManager.tiles.map_to_local(grid_position)
-	var top_left = cell_world_pos - Vector2(8, 8) - global_position
-	draw_rect(Rect2(top_left, Vector2(16, 16)), Color.RED, false, 1.0)
+	#var top_left = cell_world_pos - Vector2(8, 8) - global_position
+	draw_texture(spawn_indicator, cell_world_pos - Vector2(8, 8) - global_position)
 	
 	if spawning_random:
 		var cwp = GameManager.tiles.map_to_local(random_grid_pos)
-		var tl = cwp - Vector2(8, 8) - global_position
-		draw_rect(Rect2(tl, Vector2(16, 16)), Color.RED, false, 1.0)
+		var tl = cwp - Vector2(8, 8)
+		draw_texture(spawn_indicator, tl - global_position)

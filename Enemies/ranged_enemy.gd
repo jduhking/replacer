@@ -1,13 +1,15 @@
 class_name RangedEnemy
 extends Enemy
 
-var shoot_direction : Vector2i
+var shoot_direction : Vector2
 const min_shoot_speed : float = 45
 const max_shoot_speed : float = 200
 
+@export var offset : float = 5
+
 var fireball := preload("res://Enemies/fireball.tscn")
 
-enum STATE { WALK, SHOOT }
+enum STATE { WALK, SHOOT, PAUSE }
 var current_state : STATE = STATE.WALK
 
 @export var min_min_distance : int = 6
@@ -22,10 +24,7 @@ func _ready() -> void:
 	change_state(STATE.WALK)
 	
 func aim_player():
-	var current_tile = GameManager.tiles.local_to_map(position)
-	var player_tile = GameManager.tiles.local_to_map(GameManager.player.position)
-	var dir = player_tile - current_tile
-	shoot_direction = Vector2i(sign(dir.x), sign(dir.y))
+	shoot_direction = position.direction_to(GameManager.player.position)
 
 func change_state(new_state : STATE):
 	elapsed_time = 0
@@ -37,6 +36,9 @@ func change_state(new_state : STATE):
 			#print("shoot distance: ", shoot_distance)
 		STATE.SHOOT:
 			pass
+		STATE.PAUSE:
+			await get_tree().create_timer(shoot_pause).timeout
+			change_state(STATE.WALK)
 
 			
 func update_state(delta):
@@ -52,8 +54,8 @@ func update_state(delta):
 			shoot_elapsed_time += delta
 			if shoot_elapsed_time >= shoot_pause:
 				shoot()
-				await get_tree().create_timer(shoot_pause).timeout
-				change_state(STATE.WALK)
+				change_state(STATE.PAUSE)
+				
 			
 func _physics_process(delta: float) -> void:
 	aim_player()
@@ -88,7 +90,7 @@ func shoot():
 	var speed = randf_range(min_shoot_speed, max_shoot_speed)
 	var game = get_parent()
 	var fb : Fireball = fireball.instantiate()
-	var spawn_point = GameManager.tiles.map_to_local(current_tile + shoot_direction)
+	var spawn_point = position + shoot_direction * offset
 	fb.position = spawn_point
 	game.add_child(fb)
 	fb.init(Vector2(shoot_direction).normalized(), speed)

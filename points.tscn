@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://ps0ip0150cn1"]
+
+[ext_resource type="Script" uid="uid://bx3qljtdmif62" path="res://points.gd" id="1_3d3xj"]
+[ext_resource type="Texture2D" uid="uid://cnao35apy2kro" path="res://tt-uiscore_1.png" id="1_n31ie"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qb2w0"]
+
+[node name="Points" type="CharacterBody2D"]
+collision_layer = 0
+collision_mask = 0
+script = ExtResource("1_3d3xj")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_n31ie")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+shape = SubResource("RectangleShape2D_qb2w0")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]

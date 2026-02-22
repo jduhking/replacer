@@ -102,11 +102,9 @@ _data = {
 }
 
 [node name="Player" type="CharacterBody2D"]
+z_index = 1
 collision_layer = 2
 script = ExtResource("1_4flbx")
-movement_speed = null
-acceleration = null
-deceleration = null
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_mwb40")

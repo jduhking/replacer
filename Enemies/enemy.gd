@@ -64,6 +64,7 @@ func check_if_on_invalid_tile():
 		death()
 		
 func death():
+	GameManager.spawn_points(1, position)
 	if GameManager.reserved_cells.has(target_cell):
 		GameManager.reserved_cells.erase(target_cell)
 	queue_free()
@@ -83,6 +84,7 @@ func paint_floor():
 		#print("atlas coord: ", GameManager.tiles.get_cell_atlas_coords(GameManager.tiles_position))
 		#if GameManager.tiles.get_cell_atlas_coords(GameManager.tiles_position) in GameManager.VALID_FLOORS:
 		GameManager.tiles.set_cell(GameManager.tiles_position, tile_source_id, GameManager.paint_to_atlas_map[paint] ,GameManager.tiles.get_cell_alternative_tile(GameManager.tiles_position))
-#
+
+
 #func print_current_cell():
 	#print("current cell: ", GameManager.tiles.local_to_map(position), " atlas ", GameManager.tiles.get_cell_atlas_coords(GameManager.tiles.local_to_map(position)))

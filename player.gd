@@ -7,9 +7,12 @@ var paint : GameManager.PAINT = GameManager.PAINT.YELLOW
 @export var movement_speed : float = 120
 @export var acceleration : float = 0.6
 @export var deceleration : float = 0.1
+@export var circle_threshold : float = 1
+@export var min_circle_length : float = 4
 const MOVE_THRESHOLD : float = 1
 var last_cell : Vector2i = Vector2i(-999, -999)
 
+var current_path = []
 @onready var animator : AnimationPlayer = $AnimationPlayer
 
 var elapsed_time : float = 0
@@ -60,21 +63,62 @@ func move(dir : Vector2, delta : float):
 func switch_paint():	
 	paint = GameManager.PAINT.YELLOW if paint == GameManager.PAINT.BLACK else GameManager.PAINT.BLACK
 	UIManager.set_mode_indicator(paint == GameManager.PAINT.YELLOW)
+	current_path.clear()
 
 func paint_floor():
 	if Input.is_action_just_pressed("toggle"):
-		paint = GameManager.PAINT.YELLOW if paint == GameManager.PAINT.BLACK else GameManager.PAINT.BLACK
 		switch_paint()
 	
 	var tile_position = GameManager.tiles.local_to_map(position)
 	var tile_source_id = GameManager.tiles.get_cell_source_id(tile_position)
-
 	
 	if tile_source_id != -1:
-		#print("atlas coord: ", GameManager.tiles.get_cell_atlas_coords(GameManager.tiles_position))
-		#if GameManager.tiles.get_cell_atlas_coords(GameManager.tiles_position) in GameManager.VALID_FLOORS:
-		GameManager.tiles.set_cell(tile_position, tile_source_id, GameManager.paint_to_atlas_map[paint] ,GameManager.tiles.get_cell_alternative_tile(tile_position))
+		GameManager.tiles.set_cell(tile_position, tile_source_id, GameManager.paint_to_atlas_map[paint], GameManager.tiles.get_cell_alternative_tile(tile_position))
 		painted.emit(tile_position)
+		
+		if tile_position not in current_path:
+			current_path.append(tile_position)
+		
+		if current_path.size() > min_circle_length:
+			var start_cell = current_path[0]
+			var is_closed = Vector2(tile_position).distance_to(Vector2(start_cell)) <= 2.0
+			
+			if is_closed:
+				var centroid = get_centroid()
+				var distances = []
+				for cell in current_path:
+					distances.append(Vector2(cell).distance_to(centroid))
+				
+				var mean = distances.reduce(func(a, b): return a + b) / distances.size()
+				var variance = 0.0
+				for d in distances:
+					variance += (d - mean) * (d - mean)
+				variance /= distances.size()
+				var std_dev = sqrt(variance)
+				
+				if std_dev < circle_threshold:
+					var min_x = current_path.map(func(c): return c.x).min()
+					var max_x = current_path.map(func(c): return c.x).max()
+					var min_y = current_path.map(func(c): return c.y).min()
+					var max_y = current_path.map(func(c): return c.y).max()
+					for y in range(min_y, max_y + 1):
+						for x in range(min_x, max_x + 1):
+							var cell = Vector2i(x, y)
+							if Vector2(cell).distance_to(centroid) < mean:
+								var source_id = GameManager.tiles.get_cell_source_id(cell)
+								if source_id != -1:
+									GameManager.tiles.set_cell(cell, source_id, GameManager.paint_to_atlas_map[paint], 0)
+				
+				current_path.clear()
+
 		
 func current_tile():
 	print("current tile: ", GameManager.tiles.local_to_map(position))
+
+func get_centroid() -> Vector2:
+	if current_path.is_empty():
+		return Vector2.ZERO
+	var sum = Vector2.ZERO
+	for cell in current_path:
+		sum += Vector2(cell)
+	return sum / current_path.size()
