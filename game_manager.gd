@@ -22,6 +22,7 @@ const YELLOW_TILE : Vector2i = Vector2i(6,2)
 const BLACK_TILE : Vector2i = Vector2i(6,6)
 const FLOOR_TILE : Vector2i = Vector2i(6,10)
 const WALL_TILE : Vector2i = Vector2i(3,10)
+var cam : MainCamera
 
 var player : Player
 @onready var points = preload("res://points.tscn")
@@ -301,4 +302,11 @@ func on_load():
 	load_data(SAVE_DIR + SAVE_FILE_NAME)
 	
 	
+func frameFreeze(timeScale, duration):
+	Engine.time_scale = timeScale
+	await(get_tree().create_timer(duration * timeScale).timeout)
+	Engine.time_scale = 1
 	
+func shake(strength : float, time : float):
+	if cam:
+		cam.shake(strength, time)

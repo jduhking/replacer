@@ -3,3 +3,5 @@
 /android/
 Exports/
 export_presets.cfg
+.DS_Store
+**/save.json

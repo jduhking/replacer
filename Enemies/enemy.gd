@@ -10,7 +10,7 @@ extends CharacterBody2D
 @export var deceleration : float = 0.1
 
 @onready var animator : AnimationPlayer = $AnimationPlayer
-
+@onready var sprite : Sprite2D = $Sprite2D
 var elapsed_time : float = 0
 var current_speed : float = 0
 var was_moving : bool = false
@@ -34,11 +34,14 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	move(delta)
 	
+func _process(delta: float) -> void:
+	sprite.flip_h = (GameManager.player.position.x - position.x) < 0
+	
 func move(delta : float):
 	var target = GameManager.tiles.map_to_local(target_cell)
 	if position.distance_to(target) > 1.0:
 		# move toward target cell center
-		var dir = (target - position).normalized()
+		var dir = (target - position).normalized() if (target - position).normalized() != Vector2.ZERO else dir
 		position += dir * movement_speed * delta
 		animator.play("walk-" + ("black" if paint == GameManager.PAINT.BLACK else "yellow"))
 	else:
@@ -47,10 +50,11 @@ func move(delta : float):
 		animator.play("idle-" + ("black" if paint == GameManager.PAINT.BLACK else "yellow"))
 		var current_flows = GameManager.flows_black if paint == GameManager.PAINT.BLACK else GameManager.flows_yellow
 		if current_flows.size() > 0:
+			var player_cell = GameManager.tiles.local_to_map(GameManager.player.position)
 			var flow = current_flows[target_cell.y * GameManager.COLS + target_cell.x]
 			if flow != Vector2i.ZERO:
 				var next_cell = target_cell + flow
-				if not GameManager.reserved_cells.has(next_cell):
+				if next_cell == player_cell or (not GameManager.reserved_cells.has(next_cell)):
 					GameManager.reserved_cells.erase(target_cell)
 					target_cell = next_cell
 					GameManager.reserved_cells[target_cell] = true
@@ -69,10 +73,12 @@ func death():
 	if GameManager.reserved_cells.has(target_cell):
 		GameManager.reserved_cells.erase(target_cell)
 	queue_free()
+	GameManager.shake(8, 25)
 	
 func check_if_can_kill_player():
+	var player_cell = GameManager.tiles.local_to_map(GameManager.player.position)
 	var current_cell = GameManager.tiles.local_to_map(position)
-	if current_cell == GameManager.tiles.local_to_map(GameManager.player.position):
+	if current_cell == player_cell:
 		GameManager.change_state(GameManager.GAMESTATE.GAMEOVER)
 
 

@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=4 uid="uid://d4lyudbejw7kj"]
+[gd_scene load_steps=8 format=4 uid="uid://d4lyudbejw7kj"]
 
 [ext_resource type="PackedScene" uid="uid://mwf2y88ejmqg" path="res://player.tscn" id="1_80nbo"]
 [ext_resource type="Script" uid="uid://q600ufaexe26" path="res://game.gd" id="1_feb5d"]
 [ext_resource type="Texture2D" uid="uid://d52ik3w2n21y" path="res://tiles.png" id="2_e2o6t"]
 [ext_resource type="PackedScene" uid="uid://bq774yv1n86s5" path="res://spawner.tscn" id="4_fc0e3"]
+[ext_resource type="Script" uid="uid://8afsmfocieow" path="res://main_camera.gd" id="5_7jktm"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_feb5d"]
 texture = ExtResource("2_e2o6t")
@@ -261,3 +262,7 @@ tile_set = SubResource("TileSet_fc0e3")
 position = Vector2(156, 91)
 
 [node name="Spawner" parent="." instance=ExtResource("4_fc0e3")]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(128, 112)
+script = ExtResource("5_7jktm")

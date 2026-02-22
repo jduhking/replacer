@@ -1,7 +1,32 @@
-[gd_scene load_steps=3 format=3 uid="uid://hh7dlryhrm63"]
+[gd_scene load_steps=5 format=3 uid="uid://hh7dlryhrm63"]
 
 [ext_resource type="Script" path="res://ui_manager.gd" id="1_1r2qi"]
+[ext_resource type="Shader" uid="uid://t0vbrixogbrx" path="res://crt_shader.gdshader" id="1_quu8p"]
 [ext_resource type="FontFile" path="res://PressStart2P-Regular.ttf" id="2_quu8p"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_quu8p"]
+shader = ExtResource("1_quu8p")
+shader_parameter/overlay = false
+shader_parameter/scanlines_opacity = 0.4
+shader_parameter/scanlines_width = 0.25
+shader_parameter/grille_opacity = 0.3
+shader_parameter/resolution = Vector2(640, 480)
+shader_parameter/pixelate = true
+shader_parameter/roll = true
+shader_parameter/roll_speed = 8.0
+shader_parameter/roll_size = 15.0
+shader_parameter/roll_variation = 1.8
+shader_parameter/distort_intensity = 0.05
+shader_parameter/noise_opacity = 0.4
+shader_parameter/noise_speed = 5.0
+shader_parameter/static_noise_intensity = 0.06
+shader_parameter/aberration = 0.03
+shader_parameter/brightness = 1.4
+shader_parameter/discolor = true
+shader_parameter/warp_amount = 1.0
+shader_parameter/clip_warp = false
+shader_parameter/vignette_intensity = 0.4
+shader_parameter/vignette_opacity = 0.5
 
 [node name="UIManager" type="Node2D"]
 script = ExtResource("1_1r2qi")
@@ -9,8 +34,12 @@ script = ExtResource("1_1r2qi")
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = 7
 
-[node name="GameOverLabel" type="Label" parent="CanvasLayer"]
+[node name="CRT_EFFECT" type="Node2D" parent="CanvasLayer"]
+material = SubResource("ShaderMaterial_quu8p")
+
+[node name="GameOverLabel" type="Label" parent="CanvasLayer/CRT_EFFECT"]
 visible = false
+use_parent_material = true
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -22,8 +51,9 @@ text = "GAME OVER"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="GameOverRect" type="ColorRect" parent="CanvasLayer/GameOverLabel"]
+[node name="GameOverRect" type="ColorRect" parent="CanvasLayer/CRT_EFFECT/GameOverLabel"]
 z_index = -1
+use_parent_material = true
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -38,16 +68,20 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
-[node name="topBar" type="HBoxContainer" parent="CanvasLayer"]
+[node name="topBar" type="HBoxContainer" parent="CanvasLayer/CRT_EFFECT"]
+visible = false
+use_parent_material = true
 offset_right = 256.0
 offset_bottom = 32.0
 
-[node name="ColorRect" type="ColorRect" parent="CanvasLayer/topBar"]
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/CRT_EFFECT/topBar"]
+use_parent_material = true
 layout_mode = 2
 size_flags_horizontal = 3
 color = Color(0, 0, 0, 1)
 
-[node name="ScoreText" type="Label" parent="CanvasLayer/topBar/ColorRect"]
+[node name="ScoreText" type="Label" parent="CanvasLayer/CRT_EFFECT/topBar/ColorRect"]
+use_parent_material = true
 layout_mode = 0
 offset_left = 8.0
 offset_top = 8.0
@@ -58,7 +92,8 @@ theme_override_fonts/font = ExtResource("2_quu8p")
 theme_override_font_sizes/font_size = 8
 text = "SCORE"
 
-[node name="HiScoreText" type="Label" parent="CanvasLayer/topBar/ColorRect/ScoreText"]
+[node name="HiScoreText" type="Label" parent="CanvasLayer/CRT_EFFECT/topBar/ColorRect/ScoreText"]
+use_parent_material = true
 layout_mode = 0
 offset_left = 132.0
 offset_right = 236.0
@@ -69,7 +104,8 @@ theme_override_font_sizes/font_size = 8
 text = "HI-SCORE"
 horizontal_alignment = 2
 
-[node name="HiScoreNumber" type="Label" parent="CanvasLayer/topBar/ColorRect/ScoreText"]
+[node name="HiScoreNumber" type="Label" parent="CanvasLayer/CRT_EFFECT/topBar/ColorRect/ScoreText"]
+use_parent_material = true
 layout_mode = 0
 offset_left = 177.0
 offset_top = 10.0
@@ -81,7 +117,8 @@ theme_override_font_sizes/font_size = 8
 text = "000000"
 horizontal_alignment = 2
 
-[node name="ScoreNumber" type="Label" parent="CanvasLayer/topBar/ColorRect"]
+[node name="ScoreNumber" type="Label" parent="CanvasLayer/CRT_EFFECT/topBar/ColorRect"]
+use_parent_material = true
 layout_mode = 0
 offset_left = 8.0
 offset_top = 18.0

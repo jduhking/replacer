@@ -100,7 +100,7 @@ func _physics_process(delta: float) -> void:
 		if still_elapsed_time >= random_spawn_still_time:
 			still_elapsed_time = 0
 			spawning_random = false
-			spawn_enemy("basic", random_grid_pos)
+			spawn_enemy(select_enemy(), random_grid_pos)
 	update_state(delta)
 	
 func _draw() -> void:

@@ -11,10 +11,13 @@ var fireball := preload("res://Enemies/fireball.tscn")
 
 enum STATE { WALK, SHOOT, PAUSE }
 var current_state : STATE = STATE.WALK
+const min_follow_time : float = 0.2
+const max_follow_time : float = 2.5
 
-@export var min_min_distance : int = 6
+var follow_time : float = 0
+
+@export var min_min_distance : int = 7
 @export var max_min_distance : int = 15
-var shoot_distance 
 @export var shoot_pause : float = 0.5
 
 var shoot_elapsed_time : float = 0
@@ -32,23 +35,20 @@ func change_state(new_state : STATE):
 	current_state = new_state
 	match new_state:
 		STATE.WALK:
-			shoot_distance = randi_range(min_min_distance, max_min_distance)
+			follow_time = randf_range(min_follow_time, max_follow_time)
 			#print("shoot distance: ", shoot_distance)
 		STATE.SHOOT:
 			pass
 		STATE.PAUSE:
-			await get_tree().create_timer(shoot_pause).timeout
+			await get_tree().create_timer(shoot_pause).timeout		
 			change_state(STATE.WALK)
-
-			
+	
 func update_state(delta):
 	match current_state:
 		STATE.WALK:
 			move(delta)
-			var current_cell = GameManager.tiles.local_to_map(position)
-			var player_cell = GameManager.tiles.local_to_map(GameManager.player.position)
-			var distance = player_cell.distance_to(current_cell)
-			if distance >= shoot_distance:
+			elapsed_time += delta
+			if elapsed_time >= follow_time:
 				change_state(STATE.SHOOT)
 		STATE.SHOOT:
 			shoot_elapsed_time += delta
@@ -60,30 +60,7 @@ func update_state(delta):
 func _physics_process(delta: float) -> void:
 	aim_player()
 	update_state(delta)
-	
-func move(delta : float):
-	var target = GameManager.tiles.map_to_local(target_cell)
-	if position.distance_to(target) > 1.0:
-		# move toward target cell center
-		var dir = (target - position).normalized()
-		position += dir * movement_speed * delta
-		animator.play("walk-" + ("black" if paint == GameManager.PAINT.BLACK else "yellow"))
-	else:
-		# snap to center and pick next cell from flow field
-		position = target
-		animator.play("idle-" + ("black" if paint == GameManager.PAINT.BLACK else "yellow"))
-		var current_flows = GameManager.flows_black if paint == GameManager.PAINT.BLACK else GameManager.flows_yellow
-		if current_flows.size() > 0:
-			var flow = current_flows[target_cell.y * GameManager.COLS + target_cell.x]
-			if flow != Vector2i.ZERO:
-				var next_cell = target_cell + (-flow)
-				var atlas = GameManager.tiles.get_cell_atlas_coords(next_cell)
-				if atlas == GameManager.paint_to_atlas_map[paint] and not GameManager.reserved_cells.has(next_cell):
-					GameManager.reserved_cells.erase(target_cell)
-					target_cell = next_cell
-					GameManager.reserved_cells[target_cell] = true
-	check_if_can_kill_player()
-	check_if_on_invalid_tile()
+ 
 	
 func shoot():
 	var current_tile = GameManager.tiles.local_to_map(position)
