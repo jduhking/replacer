@@ -6,7 +6,7 @@ extends Node2D
 
 func _ready() -> void:
 	GameManager.tiles = tiles
-	GameManager.change_state(GameManager.GAMESTATE.GAME)
+	GameManager.change_state(GameManager.GAMESTATE.NONE)
 	game_theme.play()
 func check_cycle():
 	pass

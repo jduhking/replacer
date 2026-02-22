@@ -71,6 +71,7 @@ func check_if_on_invalid_tile():
 		death()
 		
 func death():
+	GameManager.point_sound.play(0.3)
 	GameManager.spawn_points(1, position)
 	if GameManager.reserved_cells.has(target_cell):
 		GameManager.reserved_cells.erase(target_cell)

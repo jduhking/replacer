@@ -12,10 +12,11 @@ var lightmode_texture_on : Texture2D = preload("res://UI/UI_res/tt-uilight-activ
 var lightmode_texture_off : Texture2D = preload("res://UI/UI_res/tt-uilight-empty.png")
 #UI indicator images
 
+@onready var cutout_transition : ColorRect = $CanvasLayer2/CutoutTransition	
 
 
 func _ready() -> void:
-	pass # Replace with function body.
+	cutout_transition.modulate.a = 0.0
 
 
 func set_gameover_label(visible : bool):

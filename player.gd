@@ -14,12 +14,14 @@ var last_cell : Vector2i = Vector2i(-999, -999)
 
 var current_path = []
 @onready var animator : AnimationPlayer = $AnimationPlayer
+@onready var sprite : Sprite2D = $Sprite2D
 
 var elapsed_time : float = 0
 var current_speed : float = 0
 var was_moving : bool = false
 
 signal painted(cell : Vector2i)
+var tween : Tween
 
 func _ready() -> void:
 	GameManager.player = self
@@ -27,7 +29,12 @@ func _ready() -> void:
 	GameManager.game_ended.connect(_on_game_over)
 	
 func _on_game_over():
-	pass
+	tween = create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN_OUT)
+	tween.tween_property(sprite, "scale", Vector2(2,2), 0.4)
+	tween.tween_callback(func (): sprite.scale = Vector2(1,1))
+	GameManager.frameFreeze(0.1,0.13)
+	GameManager.shake(20, 10)
+	animator.play("death-" + ("black" if paint == GameManager.PAINT.BLACK	else "yellow"))
 	
 func _on_paint(cell : Vector2i):
 	GameManager.painted_cells[cell] = true
@@ -114,7 +121,7 @@ func paint_floor():
 								var source_id = GameManager.tiles.get_cell_source_id(cell)
 								if source_id != -1:
 									GameManager.tiles.set_cell(cell, source_id, GameManager.paint_to_atlas_map[paint], 0)
-				
+				GameManager.frameFreeze(0.1,0.25)
 				current_path.clear()
 
 		

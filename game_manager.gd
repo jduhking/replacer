@@ -47,7 +47,7 @@ var flows_all : Array[Vector2i] = []
 var reserved_cells : Dictionary = {}
 
 var painted_cells : Dictionary = { }
-
+var tween : Tween
 var elapsed_time : float = 0
 var score : float = 0
 var highscore : int
@@ -61,6 +61,7 @@ signal game_ended
 	#
 
 @export var game_over_time : float = 8
+@onready var point_sound : AudioStreamPlayer2D = $Points
 
 func _ready():
 	verify_save_directory(SAVE_DIR)
@@ -69,9 +70,17 @@ func _ready():
 func _on_points_updated():
 	UIManager.update_score(elapsed_time, score)
 	
+
+	
 func change_state(new_state : GAMESTATE):
 	game_state = new_state
 	match game_state:
+		GAMESTATE.NONE:
+			if tween:
+				tween.kill()
+			tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+			tween.tween_property(UIManager.cutout_transition,"modulate:a", 0, 0.8)
+			tween.tween_callback(change_state.bind(GAMESTATE.GAME))
 		GAMESTATE.GAME:
 			elapsed_time = 0
 			UIManager.set_mode_indicator(true)
@@ -93,7 +102,12 @@ func change_state(new_state : GAMESTATE):
 			UIManager.set_gameover_label(true)
 			await get_tree().create_timer(game_over_time).timeout
 			UIManager.set_gameover_label(false)
-			restart_level()
+			if tween:
+				tween.kill()
+			tween = create_tween().set_trans(Tween.TRANS_LINEAR)
+			tween.tween_property(UIManager.cutout_transition, "modulate:a", 1.0, 0.8)
+			tween.tween_callback(restart_level)
+			
 
 func _process(delta: float) -> void:
 	update_state(delta)
@@ -107,7 +121,18 @@ func update_state(delta):
 				#change_state(GameManager.GAMESTATE.GAMEOVER)
 			
 func restart_level():
-	call_deferred("_deferred_goto_scene", game_path)
+	call_deferred("_deferred_restart")
+	change_state(GAMESTATE.NONE)
+	
+func _deferred_restart():
+	var scene_tree = get_tree().current_scene
+	if scene_tree != null:
+		scene_tree.free()
+		
+	var s = ResourceLoader.load(game_path)
+	current_scene = s.instantiate()
+	get_tree().root.add_child(current_scene)
+	get_tree().current_scene = current_scene
 	
 func _deferred_goto_scene(path):
 	var scene_tree = get_tree().current_scene

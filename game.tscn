@@ -305,4 +305,4 @@ color = Color(0, 0, 0, 1)
 
 [node name="GameTheme" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("7_eow3j")
-pitch_scale = 0.4
+pitch_scale = 0.6
